@@ -1,0 +1,89 @@
+<!DOCCTYPE html>
+<html>
+  <head>
+        <script src="https://unpkg.com/vue"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+        <style type="text/css">
+          .badge {
+            margin-bottom: 5px;
+          }
+        </style>
+  </head>
+    <body class="container">
+        <textarea class="form-control" rows="5" id="abi" type="textarea" placeholder="Paste your abi here"></textarea>
+    <button onclick="myFunction()">Submit</button>
+
+    <div id="app">
+      <h1>Methods</h1>
+        <table id="methods" class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Params</th>
+              <th>Payable</th>
+              <th>Outputs</th>
+              <th>Constant</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="method in methods">
+              <td>{{ method.name }}</td>
+              <td>
+                <span v-for="input in method.inputs"><span class="badge badge-primary">{{ input.type }} {{ input.name }}</span><br></span>
+              </td>
+              <td v-if="method.payable">payable</td>
+              <td v-else>nonpayable</td>
+              <td>
+                <span v-for="output in method.outputs"><span class="badge badge-danger">{{ output.type }}</span><br></span>
+              </td>
+              <td v-if="method.constant">constant</td>
+              <td v-else>constant</td>
+            </tr>
+          </tbody>
+        </table>
+
+      <h1>Events</h1>
+      <table id="events" class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Params</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="event in events">
+            <td>{{ event.name }}</td>
+            <td>
+              <span v-for="input in event.inputs"><span class="badge badge-info">{{ input.type }} {{ input.name }}</span><br></span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+        <script>
+            var app = new Vue({
+        el: '#app',
+        data: {
+          methods: [],
+          events: []
+        }
+      })
+
+
+            function myFunction() {
+                var abiJson = JSON.parse(document.getElementById("abi").value);
+
+                console.log(abiJson);
+
+                app.methods = abiJson.filter(function(obj){
+                    return obj.type == "function";
+                });
+
+                app.events = abiJson.filter(function(obj) {
+                    return obj.type == "event";
+                });
+            }
+        </script>
+    </body>
+</html>
